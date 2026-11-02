@@ -1,0 +1,14 @@
+services:
+  manager:
+    image: docker:dind
+    privileged: true
+    hostname: manager
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+
+  node:
+    image: docker:dind
+    privileged: true
+    scale: 3
+    environment:
+      DOCKER_TLS_CERTDIR: ""
