@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: supersecret
+      POSTGRES_DB: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - mfp-net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+  server:
+    image: ghcr.io/papouloutoute/esgi-tp-swarn-server:main
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db
+    networks:
+      - mfp-net
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+
+  client:
+    image: ghcr.io/papouloutoute/esgi-tp-swarn-client:main
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_TARGET: http://server:3000
+    networks:
+      - mfp-net
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+
+volumes:
+  db-data:
+
+networks:
+  mfp-net:
+    driver: overlay
+
