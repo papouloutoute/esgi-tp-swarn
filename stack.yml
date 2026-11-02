@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:16-alpine
@@ -17,29 +19,37 @@ services:
 
   server:
     image: ghcr.io/papouloutoute/esgi-tp-swarn-server:main
-    ports:
-      - "3000:3000"
     environment:
       DB_HOST: db
     networks:
       - mfp-net
+      - web
     deploy:
       replicas: 2
       restart_policy:
         condition: any
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.mfp-api.rule=Host(`api.swarm.localhost`)"
+        - "traefik.http.routers.mfp-api.entrypoints=web"
+        - "traefik.http.services.mfp-api.loadbalancer.server.port=3000"
 
   client:
     image: ghcr.io/papouloutoute/esgi-tp-swarn-client:main
-    ports:
-      - "5173:5173"
     environment:
       VITE_API_TARGET: http://server:3000
     networks:
       - mfp-net
+      - web
     deploy:
       replicas: 2
       restart_policy:
         condition: any
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.mfp-app.rule=Host(`app.swarm.localhost`) || Host(`mfp.swarm.localhost`)"
+        - "traefik.http.routers.mfp-app.entrypoints=web"
+        - "traefik.http.services.mfp-app.loadbalancer.server.port=5173"
 
 volumes:
   db-data:
@@ -47,4 +57,5 @@ volumes:
 networks:
   mfp-net:
     driver: overlay
-
+  web:
+    external: true
