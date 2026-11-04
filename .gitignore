@@ -13,3 +13,8 @@ dist/
 .vscode/
 *.log
 
+# TP Reports and screenshots
+SUIVI_TP.md
+screenshots/
+
+
