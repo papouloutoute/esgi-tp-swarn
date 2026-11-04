@@ -1,0 +1,88 @@
+server:
+  address: 'tcp://0.0.0.0:9091'
+
+log:
+  level: 'info'
+
+identity_validation:
+  reset_password:
+    jwt_secret: 'a_very_important_jwt_secret_32_characters_long'
+
+authentication_backend:
+  file:
+    path: '/run/secrets/authelia_users'
+    password:
+      algorithm: 'argon2'
+
+access_control:
+  default_policy: 'one_factor'
+
+session:
+  secret: 'a_very_important_session_secret_32_characters'
+  cookies:
+    - name: 'authelia_session'
+      domain: 'swarm.localhost'
+      authelia_url: 'https://authelia.swarm.localhost'
+
+storage:
+  encryption_key: 'a_very_important_storage_encryption_key_32_chars'
+  local:
+    path: '/data/db.sqlite3'
+
+notifier:
+  filesystem:
+    filename: '/data/notification.txt'
+
+identity_providers:
+  oidc:
+    hmac_secret: 'a_very_important_hmac_secret_32_chars_long'
+    jwks:
+      - key_id: 'default'
+        algorithm: 'RS256'
+        use: 'sig'
+        key: |
+          -----BEGIN PRIVATE KEY-----
+          MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDYkDZeAhtHlw75
+          x7kaTQ29bqgtEwnZCIrg02KIEGfSUuyRF+IQ9W+NzZTunDMV1ec0GSng7MId2OAN
+          7WA8ZXEF5bfYwdq70GFNfLJfRTVUAEq6T+hk9hnydXT1FGE5rIMoJyf4mEW4RU2u
+          oKNtjipy8rPhvRXh5Cy3rHh8te249OHUwSn8Qv/bag5hk2v/RS2VrO1tyt4jXVQt
+          n5aQ61XRYTKj3U9xmOqGoHIN/lBA4uye1K7RvZsYzNC63QeWHV1q6qz4mscdQOS3
+          SWou7jrqpp4+Zqdjm4EiUKov+u/b0aJBDWmkWRSYWa74HnmR1UVDS9HrYYtY3tVK
+          o1O7wpUpAgMBAAECggEBAJZ2E5/a/NMPa7M1BTD1yg8L+8JdUOE+YybzFqkMJOXn
+          AT+JhWJc86Vk6Q2i7odENz9mIEeKlw+fp4NlohA0NoNvZ/0sKmmEzKXGdjNk5Tk4
+          frLVY9QJfFuNKbZA84/bgMB7+/Rm70GovOEP8JvkQy/b2giDk9l+62ataITU7ZYr
+          HaDi1jj4dub1xXtJigZuRVozbUPlD9HWjSATiAsemZq23AFXuYWSJ5bljWGHFW57
+          U3POWVhxIKFb27ZmOxl8TPBnd7iNCu7J62aiDD7hwO9+IK+73glgkHJXRJaczCtc
+          dSO4MhktsQNtInf331qRaXN1mD3Y8qEuEMkdIJfIwoUCgYEA+bRjQJ1ll9KGtsSC
+          3XaF3WSZ/aJkHcvOHSRWlWUVrvAONRhWOAleBfbSUiYDXqBdCqk14QOwyOOWYvk6
+          UBua13xRSLgOP0MwI1aOOsw49C1+2XCfpXBT1uqWSqJISh+lL1MLio1LlcsQumCj
+          YEBRZZoqTgjJ25RZoQ3kkUH8klcCgYEA3gXtneuhzh3JuA1tF6agztHsaPyoDlAG
+          Ajj21BOmQ1o+9EGAHWvdJsCzlIjdgXhl5GSmihMCsHiqijzMRh+YV0Y1ifdmCaeb
+          Lk0VmRF6KK5C85lVyYBHMwI45GXVZmkFn8n9Lvgy4Hul/mhdNX6xDHiZWEgf327J
+          o4p2b6SUZH8CgYEAkSmH5aFa1ScDP67/8OUdLzZzuxozn4rCmPhuCU2JjHhrmfw6
+          6zqu2ULCxBTrMpCBZlg2RUhS9oYv//upJbbWjlzsGB0/0xEpI/IGnzHoDjOAocGy
+          XYfuhWs80ciDw+ufqOJbPEGl5j/1ypOxhpv9ddZor5K2Xptge5tK/BLjVOMCgYA9
+          8s2AGLUG+8zC7AwaY0XPL0eVa5nAlJd4m0hTmD/13wJdyMDkdKo6G95/fUjAzUUw
+          2tyU/gTsFF8RPzGIB1zMTSy3GC6CVx+3ZY63LOc23piTu57yIDa9hss0/yzx7C/D
+          i+p25o3bkOSZ/ai0OmtQHX474bPy9ciRNxsgv30gJQKBgFUBJowS2hCP37FvEnTa
+          i6lymEchKsR4sKYnrd1XPb77VPsXn8iliozDIV2H5VfpCJ1ekPxufgK0eF5f+jK4
+          2SxeL5egEou9Qft2t0iZU8SFQiExYYd5u3ZRR083jCGgD5/hg5QPM+1V0r/twNU8
+          fEkpRE/0shVq0vPrFsXgeDYl
+          -----END PRIVATE KEY-----
+    clients:
+      - client_id: 'dozzle'
+        client_name: 'Dozzle'
+        client_secret: '$pbkdf2-sha512$310000$dlGI15H2So7ns3bMx4t/mg$8n/KTgkQ39pLZJKI3TvAkYf0q1boyR/znDfMkwu6Kk8QM1ewlRgo8Ir3FC9YLsImiY09ld5.XthbUYV/fYggwA'
+        public: false
+        authorization_policy: 'one_factor'
+        redirect_uris:
+          - 'http://dozzle.swarm.localhost/api/auth/callback'
+        scopes:
+          - 'openid'
+          - 'profile'
+          - 'email'
+          - 'groups'
+        response_types:
+          - 'code'
+        grant_types:
+          - 'authorization_code'

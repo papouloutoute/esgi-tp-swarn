@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  authelia:
+    image: authelia/authelia:latest
+    command: ["authelia", "--config", "/etc/authelia/configuration.yml"]
+    networks:
+      - web
+    configs:
+      - source: authelia_config
+        target: /etc/authelia/configuration.yml
+    secrets:
+      - source: authelia_users
+        target: /run/secrets/authelia_users
+    volumes:
+      - authelia_data:/data
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.authelia.rule=Host(`authelia.swarm.localhost`)"
+        - "traefik.http.routers.authelia.entrypoints=web"
+        - "traefik.http.routers.authelia.priority=1"
+        - "traefik.http.services.authelia.loadbalancer.server.port=9091"
+        - "traefik.http.routers.authelia-oidc.rule=Host(`authelia.swarm.localhost`) && PathPrefix(`/.well-known`)"
+        - "traefik.http.routers.authelia-oidc.entrypoints=web"
+        - "traefik.http.routers.authelia-oidc.priority=100"
+        - "traefik.http.routers.authelia-oidc.middlewares=authelia-oidc-proto"
+        - "traefik.http.middlewares.authelia-oidc-proto.headers.customrequestheaders.X-Forwarded-Proto=https"
+        - "traefik.http.routers.authelia-oidc.service=authelia"
+
+volumes:
+  authelia_data:
+
+configs:
+  authelia_config:
+    external: true
+
+secrets:
+  authelia_users:
+    external: true
+
+networks:
+  web:
+    external: true
